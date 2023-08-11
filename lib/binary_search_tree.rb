@@ -90,6 +90,18 @@ class Tree
     res
   end
 
+  def depth(node)
+    pointer = @root
+    res = 0
+    until pointer == node
+      return nil if pointer.nil?
+
+      pointer = node.data > pointer.data ? pointer.right : pointer.left
+      res += 1
+    end
+    res
+  end
+
   def find(value)
     pointer = @root
     pointer = pointer.data > value ? pointer.left : pointer.right until pointer.nil? || pointer.data == value
@@ -107,6 +119,6 @@ test_tree = Tree.new
 test_tree.build_tree([7, 5, 2, 4, 1, 3, 6])
 
 test_tree.pretty_print
-p test_tree.breadth_first
 p test_tree.level_order
 test_tree.pretty_print
+p test_tree.depth(test_tree.find(7))
