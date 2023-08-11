@@ -44,6 +44,32 @@ class Tree
     end
   end
 
+  # TODO delete nodes with two children
+  def delete(value)
+    node, parent, left = find_node_and_parent(value)
+    return unless node
+
+    # leaf node
+    if node.left.nil? && node.right.nil?
+      replace_node(parent, nil, left)
+    # has a left child
+    elsif !node.left.nil? && node.right.nil?
+      replace_node(parent, node.left, left)
+    # has a right child
+    elsif node.left.nil? && !node.right.nil?
+      replace_node(parent, node.right, left)
+    end
+    # has two children
+  end
+
+  def replace_node(parent, replacement, left)
+    if left
+      parent.left = replacement
+    else
+      parent.right = replacement
+    end
+  end
+
   def search_down(value)
     pointer = @root
     prev = nil
@@ -108,6 +134,25 @@ class Tree
     pointer
   end
 
+  # returns the node, parent, and boolean for left or right
+  # true for left, false for right
+  def find_node_and_parent(value)
+    pointer = @root
+    prev = nil
+    left = false
+    until pointer.nil? || pointer.data == value
+      prev = pointer
+      if pointer.data > value
+        pointer = pointer.left
+        left = true
+      else
+        pointer = pointer.right
+        left = false
+      end
+    end
+    pointer.nil? ? nil : [pointer, prev, left]
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
@@ -118,7 +163,13 @@ end
 test_tree = Tree.new
 test_tree.build_tree([7, 5, 2, 4, 1, 3, 6])
 
+# test_tree.pretty_print
+# p test_tree.level_order
 test_tree.pretty_print
-p test_tree.level_order
+# p test_tree.depth(test_tree.find(7))
+puts '--------------'
+test_tree.delete(5)
 test_tree.pretty_print
-p test_tree.depth(test_tree.find(7))
+puts '--------------'
+test_tree.delete(6)
+test_tree.pretty_print
