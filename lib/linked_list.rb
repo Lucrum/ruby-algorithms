@@ -2,7 +2,7 @@
 
 # node for linked list
 # pointer points to next node in list
-class Node
+class LinkedNode
   attr_accessor :value, :next_node
 
   def initialize(value, next_node = nil)
@@ -25,16 +25,16 @@ class LinkedList
     if @head
       pointer = @head
       pointer = pointer.next_node until pointer.next_node.nil?
-      new_node = Node.new(value)
+      new_node = LinkedNode.new(value)
       pointer.next_node = new_node
     else
-      @head = Node.new(value)
+      @head = LinkedNode.new(value)
     end
     @size += 1
   end
 
   def prepend(value)
-    new_node = Node.new(value)
+    new_node = LinkedNode.new(value)
     new_node.next_node = @head
     @head = new_node
     @size += 1
