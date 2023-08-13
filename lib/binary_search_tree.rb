@@ -15,8 +15,9 @@ end
 
 # binary tree struct
 class Tree
-  def initialize
+  def initialize(arr)
     @root = nil
+    build_tree(arr)
   end
 
   def build_tree(arr)
