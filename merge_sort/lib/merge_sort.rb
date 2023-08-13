@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'utils'
+require_relative '../../lib/utils'
 
 def merge_sort(arr)
   if arr.length < 2
@@ -12,7 +12,6 @@ def merge_sort(arr)
 end
 
 def merge(left, right)
-  puts "MERGE #{left} #{right}"
   res = []
   until left.empty? && right.empty?
     if left.empty? && !right.empty?

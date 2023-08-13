@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'utils'
+require_relative '../../lib/utils'
 
 # node for binary trees. left and right pointer
 class BinaryNode

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../lib/binary_search_tree'
+require_relative 'lib/binary_search_tree'
 
 test_tree = Tree.new(Array.new(15) { rand(1..100) })
 puts test_tree.balanced?
