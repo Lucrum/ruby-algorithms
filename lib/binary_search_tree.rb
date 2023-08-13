@@ -193,11 +193,14 @@ class Tree
     res
   end
 
+  # returns -1 if node does not exist
   def depth(node)
+    return -1 if node.nil?
+
     pointer = @root
     res = 0
     until pointer == node
-      return nil if pointer.nil?
+      return -1 if pointer.nil?
 
       pointer = node.data > pointer.data ? pointer.right : pointer.left
       res += 1
@@ -205,11 +208,14 @@ class Tree
     res
   end
 
+  # returns -1 if node does not exist
   def height(node)
-    return nil if node.nil?
+    return -1 if node.nil?
     return 0 if node.left.nil? && node.right.nil?
 
-    res = [height(node.left), height(node.right)]
+    res = []
+    res.append(height(node.left)) if node.left
+    res.append(height(node.right)) if node.right
     res.max + 1
   end
 
@@ -243,27 +249,17 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
+
+  def balanced?
+    return true if (height(@root.left) - height(@root.right)).abs < 2
+
+    false
+  end
+
+  def rebalance
+    inorder_arr = inorder
+
+    @root = nil
+    build_tree(inorder_arr)
+  end
 end
-
-test_tree = Tree.new
-test_tree.build_tree([7, 6, 5, 4, 3, 2, 1])
-
-# test_tree.pretty_print
-# p test_tree.level_order
-test_tree.pretty_print
-# p test_tree.depth(test_tree.find(7))
-# puts '--------------'
-# test_tree.delete(5)
-# test_tree.pretty_print
-# puts '--------------'
-# test_tree.delete(6)
-# test_tree.pretty_print
-puts '--------------'
-# test_tree.delete(6)
-# test_tree.pretty_print
-# puts '--------------'
-# test_tree.delete(7)
-# test_tree.pretty_print
-p test_tree.inorder
-p test_tree.preorder
-p test_tree.postorder
