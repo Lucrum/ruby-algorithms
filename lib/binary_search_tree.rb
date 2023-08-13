@@ -38,15 +38,14 @@ class Tree
 
   def insert(value)
     if @root
-      search_down(value) unless find(value)
+      place_down(value) unless find(value)
     else
       @root = BinaryNode.new(value)
     end
   end
 
-  # TODO delete nodes with two children
-  def delete(value)
-    node, parent, left = find_node_and_parent(value)
+  def delete(value, start: @root)
+    node, parent, left = find_node_and_parent(value, start: start)
     return unless node
 
     # leaf node
@@ -58,8 +57,12 @@ class Tree
     # has a right child
     elsif node.left.nil? && !node.right.nil?
       replace_node(parent, node.right, left)
-    end
     # has two children
+    elsif !node.left.nil? && !node.right.nil?
+      successor, successor_parent = find_inorder_successor(node)
+      swap_node_values(node, successor)
+      delete(value, start: successor_parent)
+    end
   end
 
   def replace_node(parent, replacement, left)
@@ -70,7 +73,24 @@ class Tree
     end
   end
 
-  def search_down(value)
+  # inorder successor is min of right child
+  def find_inorder_successor(start_node)
+    pointer = start_node.right
+    prev = nil
+    until pointer.left.nil?
+      prev = pointer
+      pointer = pointer.left
+    end
+    [pointer, prev]
+  end
+
+  def swap_node_values(old_node, new_node)
+    temp = old_node.data
+    old_node.data = new_node.data
+    new_node.data = temp
+  end
+
+  def place_down(value)
     pointer = @root
     prev = nil
     left = true
@@ -92,6 +112,33 @@ class Tree
     end
   end
 
+  def inorder(&block)
+    inorder_arr = inorder_traversal(@root)
+    return nodes_to_data(inorder_arr) unless block_given?
+
+    inorder_arr.each do |n|
+      block.call n
+    end
+  end
+
+  def preorder(&block)
+    preorder_arr = preorder_traversal(@root)
+    return nodes_to_data(preorder_arr) unless block_given?
+
+    preorder_arr.each do |n|
+      block.call n
+    end
+  end
+
+  def postorder(&block)
+    postorder_arr = postorder_traversal(@root)
+    return nodes_to_data(postorder_arr) unless block_given?
+
+    postorder_arr.each do |n|
+      block.call n
+    end
+  end
+
   def breadth_first
     return nil if @root.nil?
 
@@ -103,6 +150,36 @@ class Tree
       queue.append(pointer.right) unless pointer.right.nil?
       res.append(pointer)
     end
+    res
+  end
+
+  def inorder_traversal(node)
+    return nil if node.nil?
+
+    res = []
+    res += inorder_traversal(node.left) unless node.left.nil?
+    res.append(node)
+    res += inorder_traversal(node.right) unless node.right.nil?
+    res
+  end
+
+  def preorder_traversal(node)
+    return nil if node.nil?
+
+    res = []
+    res.append(node)
+    res += preorder_traversal(node.left) unless node.left.nil?
+    res += preorder_traversal(node.right) unless node.right.nil?
+    res
+  end
+
+  def postorder_traversal(node)
+    return nil if node.nil?
+
+    res = []
+    res += postorder_traversal(node.left) unless node.left.nil?
+    res += postorder_traversal(node.right) unless node.right.nil?
+    res.append(node)
     res
   end
 
@@ -128,6 +205,14 @@ class Tree
     res
   end
 
+  def height(node)
+    return nil if node.nil?
+    return 0 if node.left.nil? && node.right.nil?
+
+    res = [height(node.left), height(node.right)]
+    res.max + 1
+  end
+
   def find(value)
     pointer = @root
     pointer = pointer.data > value ? pointer.left : pointer.right until pointer.nil? || pointer.data == value
@@ -136,8 +221,8 @@ class Tree
 
   # returns the node, parent, and boolean for left or right
   # true for left, false for right
-  def find_node_and_parent(value)
-    pointer = @root
+  def find_node_and_parent(value, start: @root)
+    pointer = start
     prev = nil
     left = false
     until pointer.nil? || pointer.data == value
@@ -161,15 +246,24 @@ class Tree
 end
 
 test_tree = Tree.new
-test_tree.build_tree([7, 5, 2, 4, 1, 3, 6])
+test_tree.build_tree([7, 6, 5, 4, 3, 2, 1])
 
 # test_tree.pretty_print
 # p test_tree.level_order
 test_tree.pretty_print
 # p test_tree.depth(test_tree.find(7))
+# puts '--------------'
+# test_tree.delete(5)
+# test_tree.pretty_print
+# puts '--------------'
+# test_tree.delete(6)
+# test_tree.pretty_print
 puts '--------------'
-test_tree.delete(5)
-test_tree.pretty_print
-puts '--------------'
-test_tree.delete(6)
-test_tree.pretty_print
+# test_tree.delete(6)
+# test_tree.pretty_print
+# puts '--------------'
+# test_tree.delete(7)
+# test_tree.pretty_print
+p test_tree.inorder
+p test_tree.preorder
+p test_tree.postorder
