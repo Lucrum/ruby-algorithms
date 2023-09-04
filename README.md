@@ -1,3 +1,3 @@
 # ruby-algorithms
 
-A collection of algorithms from The Odin Project's Ruby cirriculum.
+A collection of algorithms from The Odin Project's Ruby curriculum.
